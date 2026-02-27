@@ -14,6 +14,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 //************************* Local types ***************************************
 
@@ -52,8 +53,8 @@ void UdpClientConnection(void)
     stServerSockAddr.sin_addr.s_addr =  inet_addr(IP_ADDRESS);
 
     memset(ucBuffer, 0, MAXSIZE);
-    strcpy(ucBuffer, "Hi UDP, I am client\n");
-    sendto(lClientSocketFd, ucBuffer, strlen(ucBuffer), 0,
+    strcpy((char *)ucBuffer, "Hi UDP, I am client\n");
+    sendto(lClientSocketFd, ucBuffer, MAXSIZE - 1, 0,
      (const struct sockaddr *)&stServerSockAddr,
       sizeof(stServerSockAddr));
 

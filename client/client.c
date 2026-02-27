@@ -15,6 +15,7 @@
 #include <arpa/inet.h>
 #include "client.h"
 #include "udp.h"
+#include <unistd.h>
 
 //************************* Include Files**************************************
 
@@ -85,7 +86,7 @@ static void ClientConnection(void)
     memset(cBuffer, 0, MAX_SIZE);
     snprintf((char *)cBuffer, MAX_SIZE, "Hi i am client");
     send(lClientSock, cBuffer, MAX_SIZE, 0);
-    //close(lClientSock);
+    close(lClientSock);
 
 }
 
@@ -100,12 +101,12 @@ void ClientMenu(void)
 {
     uint8_t ucIndex = 0;
     uint32_t ulChoice = 0;
-    uint8_t ucChoiceBuffer[CHOICE_BUFF] = {0};
+    char cChoiceBuffer[CHOICE_BUFF] = {0};
 
     for(ucIndex = 0; ucIndex < MENU_SIZE; ucIndex++)
     {
         printf("%d.%s",stMenu->cIndex, stMenu->cMenuName);
     }
-    sscanf((const char *)ucChoiceBuffer, "%d", &ulChoice);
+    sscanf(cChoiceBuffer, "%d", &ulChoice);
     stMenu[ulChoice].pvMenuOperation();
 }
