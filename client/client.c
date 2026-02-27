@@ -100,13 +100,13 @@ static void ClientConnection(void)
 void ClientMenu(void)
 {
     uint8_t ucIndex = 0;
-    uint32_t ulChoice = 0;
+    int32_t lChoice = 0;
     char cChoiceBuffer[CHOICE_BUFF] = {0};
 
     for(ucIndex = 0; ucIndex < MENU_SIZE; ucIndex++)
     {
         printf("%d.%s",stMenu->cIndex, stMenu->cMenuName);
     }
-    sscanf(cChoiceBuffer, "%d", &ulChoice);
-    stMenu[ulChoice].pvMenuOperation();
+    sscanf(cChoiceBuffer, "%d", &lChoice);
+    stMenu[lChoice].pvMenuOperation();
 }
