@@ -70,8 +70,8 @@ static void ClientConnection(void)
         if (0 < lConnectionStatus)
         {
             (void)printf("Connected to serever\n");
-            memset(cBuffer, 0, MAX_SIZE);
-            snprintf((char *)cBuffer, MAX_SIZE, "Hi i am client");
+            (void)memset(cBuffer, 0, MAX_SIZE);
+            (void)snprintf((char *)cBuffer, MAX_SIZE, "Hi i am client");
             send(lClientSock, cBuffer, MAX_SIZE, 0);
             close(lClientSock);
         }
