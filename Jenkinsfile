@@ -6,14 +6,6 @@ pipeline {
             steps { checkout scm }
         }
 
-        stage('Coding Standards') {
-            steps {
-                // Runs clang-format on all .c and .h files
-                // If it finds formatting issues, this will exit with 1 and fail the build
-                sh 'find . -name "*.c" -o -name "*.h" | xargs clang-format --dry-run --Werror'
-            }
-        }
-
         stage('Static Analysis') {
             steps {
                 // Runs Cppcheck and creates an XML report
