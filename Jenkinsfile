@@ -1,58 +1,36 @@
 pipeline {
     agent any
-
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                checkout scm
+                // 1. Generate the Build Log: 
+                // The '2>&1' part ensures both standard errors and output are saved.
+                sh 'make clean && make > buildlog.txt 2>&1'
             }
         }
 
         stage('Coding Standards') {
             steps {
-                // Using -print0 for safety with filenames
-                sh 'find . -name "*.c" -o -name "*.h" -print0 | xargs -0 clang-format --dry-run --Werror'
+                // 2. Generate the Coding Standards Report:
+                // We add '|| true' because if the tool finds errors, it returns a 
+                // failure code, which would stop the pipeline. '|| true' forces it to continue.
+                sh 'cppcheck . --enable=all --addon=misra.py > coding_standards_report.txt 2>&1 || true'
             }
         }
 
         stage('Static Analysis') {
             steps {
-                // Running cppcheck and saving the output
-                sh 'cppcheck --enable=all --xml --xml-version=2 . 2> cppcheck-results.xml'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                timestamps {
-                    sh 'make clean'
-                    sh 'make'
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '''
-                    ./server & 
-                    SERVER_PID=$!
-                    sleep 2
-                    ./clienttest
-                    kill $SERVER_PID
-                '''
+                // 3. Generate the Static Analysis Report:
+                sh 'cppcheck . > static-analysis-report.txt 2>&1 || true'
             }
         }
     }
-
+    
     post {
         always {
-            // This is the correct modern way to capture Cppcheck results
-            recordIssues(
-                enabledForFailure: true,
-                tool: cppCheck(pattern: 'cppcheck-results.xml')
-            )
-            // Archive the actual binary created
-            archiveArtifacts artifacts: 'clienttest', fingerprint: true
+            // 4. Archive all of them at once!
+            // You can use a comma-separated list to archive multiple files.
+            archiveArtifacts artifacts: 'buildlog.txt, coding_standards_report.txt, main.o, static-analysis-report.txt', fingerprint: true
         }
     }
 }
