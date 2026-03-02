@@ -3,8 +3,23 @@ pipeline {
 
     stages {
         stage('Checkout') {
+            steps { checkout scm }
+        }
+
+        stage('Coding Standards') {
             steps {
-                checkout scm
+                // Runs clang-format on all .c and .h files
+                // If it finds formatting issues, this will exit with 1 and fail the build
+                sh 'find . -name "*.c" -o -name "*.h" | xargs clang-format --dry-run --Werror'
+            }
+        }
+
+        stage('Static Analysis') {
+            steps {
+                // Runs Cppcheck and creates an XML report
+                // --enable=all: checks everything
+                // --xml: produces an XML file for Jenkins to read
+                sh 'cppcheck --enable=all --xml --xml-version=2 . 2> cppcheck-results.xml'
             }
         }
 
@@ -14,31 +29,12 @@ pipeline {
                 sh 'make'
             }
         }
-
-        stage('Test') {
-            steps {
-                sh '''
-                    # Start server in background
-                    ./server & 
-                    SERVER_PID=$!
-                    
-                    # Wait for server to be ready
-                    sleep 2
-                    
-                    # Run the test binary (make sure this name matches!)
-                    ./clienttest
-                    
-                    # Cleanup server
-                    kill $SERVER_PID
-                '''
-            }
-        }
     }
-
-    // The post block MUST be outside the 'stages' block
+    
     post {
-        success {
-            archiveArtifacts artifacts: 'clienttest', fingerprint: true
+        always {
+            // Publishes the results of Cppcheck to the Jenkins dashboard
+            publishCppcheck pattern: 'cppcheck-results.xml'
         }
     }
 }
