@@ -25,8 +25,13 @@ pipeline {
     
     post {
         always {
-            // Publishes the results of Cppcheck to the Jenkins dashboard
-            publishCppcheck pattern: 'cppcheck-results.xml'
+            // This is the correct modern way to capture Cppcheck results
+            recordIssues(
+                enabledForFailure: true,
+                tool: cppCheck(pattern: 'cppcheck-results.xml')
+            )
+            // Archive the actual binary created
+            archiveArtifacts artifacts: 'clienttest', fingerprint: true
         }
     }
 }
