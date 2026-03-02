@@ -27,9 +27,10 @@ pipeline {
         post {
         // This runs regardless of whether the build succeeded or failed
         // But usually, you only want to save artifacts on success
-        success {
-            archiveArtifacts artifacts: 'clienttest', fingerprint: true
+            success {
+                archiveArtifacts artifacts: 'clienttest', fingerprint: true
+            }
         }
-    }
+        
     }
 }
