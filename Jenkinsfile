@@ -14,7 +14,7 @@ pipeline {
                 // 2. Generate the Coding Standards Report:
                 // We add '|| true' because if the tool finds errors, it returns a 
                 // failure code, which would stop the pipeline. '|| true' forces it to continue.
-                sh 'cppcheck . --enable=all --suppress=missingIncludeSystem --addon=misra.py > coding_standards_report.txt 2>&1 || true'
+                sh 'cppcheck . -I udp/ -I client/ --enable=all --suppress=missingIncludeSystem --addon=misra.py > coding_standards_report.txt 2>&1 || true'
             }
         }
 
