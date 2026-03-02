@@ -22,7 +22,7 @@
 
 //************************* Local Functions ***********************************
 
-int main()
+int main(void)
 {
     ClientMenu();
     
