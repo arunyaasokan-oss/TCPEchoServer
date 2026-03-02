@@ -41,7 +41,6 @@ static const _MENU stMenu[] =
          .cMenuName = "UDP Sender-Receiver",
          .pvMenuOperation = UdpClientConnection},
 };
-
 //*****************************************************************************
 // Purpose   : Establish client communication
 // Input     : None
@@ -60,7 +59,7 @@ static void ClientConnection(void)
     lClientSock = socket(AF_INET, SOCK_STREAM, 0);
     if (0 < lClientSock)
     {
-        printf("socket connection established successfully..\n");
+        (void)printf("socket connection established successfully..\n");
         stClientAddr.sin_family = AF_INET;
         stClientAddr.sin_port = PORT_ADDRESS;
         stClientAddr.sin_addr.s_addr = inet_addr(IP_ADDRESS);
@@ -70,13 +69,13 @@ static void ClientConnection(void)
 
         if (0 < lConnectionStatus)
         {
-            printf("Connected to serever\n");
+            (void)printf("Connected to serever\n");
             memset(cBuffer, 0, MAX_SIZE);
             snprintf((char *)cBuffer, MAX_SIZE, "Hi i am client");
             send(lClientSock, cBuffer, MAX_SIZE, 0);
             close(lClientSock);
         }
-    }   
+    }
 }
 
 //*****************************************************************************
@@ -88,14 +87,15 @@ static void ClientConnection(void)
 //*****************************************************************************
 void ClientMenu(void)
 {
+
     uint8_t ucIndex = 0;
     int32_t lChoice = 0;
     char cChoiceBuffer[CHOICE_BUFF] = {0};
 
     for (ucIndex = 0; ucIndex < MENU_SIZE; ucIndex++)
     {
-        printf("%d.%s", stMenu->cIndex, stMenu->cMenuName);
+        (void)printf("%d.%s", stMenu->cIndex, stMenu->cMenuName);
     }
-    sscanf(cChoiceBuffer, "%d", &lChoice);
+    (void)sscanf(cChoiceBuffer, "%d", &lChoice);
     stMenu[lChoice].pvMenuOperation();
 }
